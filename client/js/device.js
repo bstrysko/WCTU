@@ -39,46 +39,13 @@ function Device(device_address,port_number)
 	});
 }
 
+Device.prototype.getBatteryLife = function()
+{
+
+}
+
 //true if running in NodeJS
 if(typeof window === 'undefined') 
 {
 	module.exports = Device;
 }
-
-/*
-class Device
-{
-	Websocket ws;
-
-	Device(ip_address,connect_params)
-	{
-		//connect
-	}
-
-	bool connect(ip_address)
-	{
-		ws = .....
-	}
-
-	int getBatteryLife()
-	{
-		return battery_life;
-	}
-
-
-	ws.on('message', function(message) {
-		if(message['type'] == null)
-		{
-			//spit crap
-		}
-    	if(message['type'] == "battery")
-    	{
-    		if(message['channel']  == 0)
-    		{
-    			battery_life = message["data"]["life"];
-    		}
-
-    	}
-});
-
-}*/
