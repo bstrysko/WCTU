@@ -6,22 +6,14 @@ if(typeof window === 'undefined')
 
 var version = "1.0.0";
 
-function has_type(type)
+function descriptions(device_list)
 {
-	return function(obj){
-		return obj.type === type;
-	}
-}
-
-function descriptions_by_type(device_list, type)
-{
-	var devs = device_list.filter(has_type(type));
-	return devs.map(function(dev){
+	return device_list.map(function(dev){
 		return dev.get_description();
 	});
 }
 
-function Server(port_number, device_list)
+function Server(port_number, devices)
 {
 	if(typeof port_number === 'undefined')
 	{
@@ -34,9 +26,9 @@ function Server(port_number, device_list)
 			return {
 				type: 'connection_open',
 				version: version,
-				battery: {rating: 2000},
 				devices: {
-					oscilloscopes: descriptions_by_type(device_list, 'oscilloscope')
+					batteries: descriptions(devices.batteries),
+					oscilloscopes: descriptions(devices.oscilloscopes)
 				}
 			};
 		}

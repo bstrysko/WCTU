@@ -1,6 +1,10 @@
 var Server = require('./server');
-var DummyOScope = require('./dummyoscope');
+var Battery = require('./battery');
+var Oscilloscope = require('./oscilloscope');
 
-var device_list = [new DummyOScope(0)];
+var devices = {
+  batteries: [new Battery(0)],
+  oscilloscopes: [new Oscilloscope(0), new Oscilloscope(1)]
+};
 
-var srv = new Server(8080, device_list);
+var srv = new Server(8080, devices);

@@ -1,4 +1,4 @@
-function DummyOScope(channel)
+function Oscilloscope(channel)
 {
 	if(typeof channel === 'undefined')
 	{
@@ -8,16 +8,16 @@ function DummyOScope(channel)
 	this.type = 'oscilloscope';
 }
 
-DummyOScope.prototype.get_description = function()
+Oscilloscope.prototype.get_description = function()
 {
 	return {
 		channel: this.channel,
 		voltages: {min: -20, max: 20},
-		frequency: 'lol, with JSON probably like 2 Hz lol'
+		frequency: 50
 	};
 }
 
 if(typeof window === 'undefined')
 {
-	module.exports = DummyOScope;
+	module.exports = Oscilloscope;
 }
