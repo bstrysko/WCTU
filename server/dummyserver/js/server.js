@@ -13,6 +13,21 @@ function descriptions(device_list)
 	});
 }
 
+function device_msg_handler(msg, list) {
+	if(msg.channel in list)
+	{
+		return {
+			type: msg.type,
+			channel: msg.channel,
+			data: list[msg.channel].get_data()
+		}
+	}
+	else
+	{
+		console.log('Invalid channel: '+msg.channel);
+	}
+}
+
 function Server(port_number, devices)
 {
 	if(typeof port_number === 'undefined')
@@ -31,8 +46,9 @@ function Server(port_number, devices)
 					oscilloscopes: descriptions(devices.oscilloscopes)
 				}
 			};
-		}
-		// TODO add 'oscilloscope' message type
+		},
+		'battery': device_msg_handler,
+		'oscilloscope': device_msg_handler
 	};
 
 	wss = new WebSocketServer({port: port_number});

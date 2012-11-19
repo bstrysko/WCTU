@@ -16,6 +16,14 @@ Battery.prototype.get_description = function()
 	};
 }
 
+Battery.prototype.get_data = function()
+{
+  return {
+    life: 30,
+    time: 20
+  }
+}
+
 if(typeof window === 'undefined')
 {
 	module.exports = Battery;

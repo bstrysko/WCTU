@@ -17,6 +17,13 @@ Oscilloscope.prototype.get_description = function()
 	};
 }
 
+Oscilloscope.prototype.get_data = function()
+{
+  return {
+    waveform: [ -30 , 30 , 10 , 10.4 , -11.2 , 5.4 ]
+  };
+}
+
 if(typeof window === 'undefined')
 {
 	module.exports = Oscilloscope;
