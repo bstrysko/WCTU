@@ -68,7 +68,7 @@ function Server(port_number, devices)
 				if(msg.type in msg_handlers)
 				{
 					var response = msg_handlers[msg.type](msg);
-					ws.send(JSON.stringify(response));
+					ws.send(JSON.stringify(response, null, 2));
 				}
 				else
 				{
