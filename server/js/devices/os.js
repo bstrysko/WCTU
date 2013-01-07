@@ -71,11 +71,12 @@ function OS(parameters)
  * information about this OS instance
  * 
  * @return - description structure with fields
- * arch, platform, cpu, network, and commands
+ * channel, arch, platform, cpu, network, and commands
  */
 OS.prototype.get_description = function()
 {
 	return {
+		channel: this.channel,
 		arch: os.arch(),
 		platform: os.platform(),
 		cpu: os.cpus(),
@@ -89,7 +90,7 @@ OS.prototype.get_description = function()
  * information about this OS instances data
  *
  * @return - description structure with fields
- * uptime load_average, free_memory, and total_memory.
+ * uptime, load_average, free_memory, and total_memory.
  * If any field is -1, it means its value could not be
  * calculated using this hardware. 
  */

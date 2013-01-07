@@ -59,8 +59,8 @@ if(typeof(window) === 'undefined')
 			else if(c === 't')
 			{
 				//TODO: toggle transmission from all oscilloscopes
-				d1.send_command("oscilloscope",0,{
-					transmit: false,
+				d1.send_command("oscilloscope",-1,{
+					transmit: 'toggle',
 				});
 			} 
 			else 

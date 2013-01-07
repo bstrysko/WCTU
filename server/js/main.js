@@ -1,4 +1,15 @@
 /*
+ * main.js
+ * WCTU - Wirelessly Controlled Testing Unit
+ *
+ * @ Author - Brent Strysko
+ *
+ * This file does not define class but instead of 
+ * initializes a server to a specific port number and
+ * to a device group array devices.
+ */
+
+/*
  * Only use 'require' if running in NodeJS
  */
 if(typeof(window) === 'undefined')

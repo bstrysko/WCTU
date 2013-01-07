@@ -40,7 +40,7 @@ function Device(parameters,callback)
             }
             catch (error)
             {
-                console.log('ERROR: Invalid JSON message: ' + error);
+                console.log('WARNING: Invalid JSON message: ' + error);
                 return;
             }
 
@@ -49,7 +49,7 @@ function Device(parameters,callback)
                 if(typeof(message.version) === 'undefined')
                 {
                     console.log("'message.version' 'undefined' in message of type 'connection_open'");
-                    return
+                    return;
                 }
                 else if(Global.version < message.version)
                 {
@@ -63,7 +63,20 @@ function Device(parameters,callback)
                 }
                 
                 self.version = message.version;
-                self.devices = message.devices;
+
+                self.devices = {};
+
+                for(device_group_index in message.devices)
+                {
+                    self.devices[device_group_index] = {};
+
+                    for(device_index in message.devices[device_group_index])
+                    {
+                        var channel = message.devices[device_group_index][device_index].channel;
+
+                        self.devices[device_group_index][channel] = message.devices[device_group_index][device_index];
+                    }
+                }
             }
             //check that type is of a valid device
             else if(typeof(self.devices[message.type]) !== 'undefined')
@@ -96,7 +109,58 @@ function Device(parameters,callback)
 	});
 }
 
+/*
+ * Sends a command to the device group type on the channel specified.
+ * If channel is -1, the command is sent to all devices in that device group.
+ * Data is an object with key-value pairs of the command and its one value argument.
+ * If the type and channel are invalid the message is not sent.
+ *
+ * @parameters
+ * type - device group name
+ * channel - device channel on device group.  Can be -1 to broadcast to all devices in the group.
+ * data - object containing the command argument key value pairs
+ *
+ * @return - nothing
+ */
 Device.prototype.send_command = function(type,channel,data)
+{
+    if(typeof(this.devices[type]) !== 'undefined')
+    {
+        if(channel === -1)
+        {
+            for(channel_i in this.devices[type])
+            {
+                this._send_command(type,channel_i,data);
+            }
+        }
+        else if(typeof(this.devices[type][channel]) !== 'undefined')
+        {
+            this._send_command(type,channel,data);
+        }
+        else
+        {
+            console.log("WARNING: " + channel + " is an invalid channel # for " + type + ".  Message " + JSON.stringify(data) + " not sent");
+        }
+    }
+    else
+    {
+        console.log("WARNING: " + type + " is not a valid device group.  Message " + JSON.stringify(data) + " not sent");
+    }
+}
+
+/*
+ * Helper function of send_command.  Arguments are the same
+ * as send_command except there is no error checking and thus -1
+ * is not a valid channel argument.
+ * 
+ * @parameters
+ * type - device group name
+ * channel - device channel on device group.  Cannot be -1.
+ * data - object containing the command argument key value pairs
+ *
+ * @return - nothing
+ */
+Device.prototype._send_command = function(type,channel,data)
 {
     this.ws.send(JSON.stringify({
         type: type,
@@ -105,8 +169,10 @@ Device.prototype.send_command = function(type,channel,data)
     }));
 }
 
-//true if running in NodeJS
-if(typeof(window) === 'undefined') 
+/*
+ * Only make use of exports if running in NodeJS
+ */
+ if(typeof(window) === 'undefined') 
 {
 	module.exports = Device;
 }
