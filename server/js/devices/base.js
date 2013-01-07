@@ -113,7 +113,7 @@ Base.register_device_channel = function(parameters)
 }
 
 /*
- * @description - returns an array containing the names of valid commands
+ * returns an array containing the names of valid commands
  * for a particular device instance.
  *
  * @returns - an array of a device instance's valid commands
@@ -131,7 +131,7 @@ Base.get_commands = function()
 }
 
 /*
- * @description - receive_message is called on a device whenever a message arives at the
+ * receive_message is called on a device whenever a message arives at the
  * server for a valid device group and channel number.
  *
  * @parameters
@@ -194,7 +194,7 @@ Base.receive_message = function(commands,transmit_device_group_array,device_inde
 }
 
 /*
- * @description - Stub until updated by Device.  Needs to be created by Device
+ * Stub until updated by Device.  Needs to be created by Device
  * because only Device has knowledge about what the clients are.
  * Without knowing this information broadcasts would not be possible.
  *

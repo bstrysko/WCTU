@@ -1,3 +1,6 @@
+/*
+ * Only use 'require' if running in NodeJS
+ */
 if(typeof(window) === 'undefined')
 {
   var Device = require('./device');

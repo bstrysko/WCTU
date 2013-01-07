@@ -52,7 +52,7 @@ if(typeof(window) === 'undefined')
  *			[device3, device4, ...],
  *		]	
  *		
- *		where device1 and device2 and device3 and device 4 are of the same type	
+ *		where device1 and device2 and device3 and device4 are of the same type	
  */
 function Device(parameters)
 {
@@ -60,8 +60,7 @@ function Device(parameters)
 
 	if(typeof(parameters) === 'undefined')
 	{
-		console.log("ERROR: Device has undefined 'parameters'");
-		process.exit(1);
+		throw new Error("Device has undefined 'parameters'");
 	}
 
 	/*
@@ -74,8 +73,7 @@ function Device(parameters)
 
 	if(typeof(parameters.devices) === 'undefined')
 	{
-		console.log("ERROR: Device has undefined 'parameters.devices'");
-		process.exit(1);
+		throw new Error("Device has undefined 'parameters.devices'");
 	}
 
 	/*
@@ -93,8 +91,7 @@ function Device(parameters)
 
 		if(device_group.length === 0)
 		{
-			console.log("ERROR: Cannot have device group with no devices");
-			process.exit(1);
+			throw new Error("Cannot have device group with no devices");
 		}
 
 		var device_group_name = device_group[0].constructor.name.toLowerCase();
@@ -105,16 +102,14 @@ function Device(parameters)
 		{
 			if(device_group[device_index].constructor.name.toLowerCase() !== device_group_name)
 			{
-				console.log("ERROR: Devices in device group #" + group_index + " are not all of the same type '" + device_group_name + "'");
-				process.exit(1);
+				throw new Error("Devices in device group #" + group_index + " are not all of the same type '" + device_group_name + "'");
 			}
 
 			var channel = device_group[device_index].channel;
 			
 			if(typeof(channel) === 'undefined')
 			{
-				console.log("ERROR: Device in device group '" + device_group_name + "' does not have a channel");
-				process.exit(1);
+				throw new Error("Device in device group '" + device_group_name + "' does not have a channel");
 			}
 			
 			this.devices[device_group_name][channel] = parameters.devices[device_group_index][device_index];
@@ -146,7 +141,7 @@ function Device(parameters)
 			}
 			catch (error)
 			{
-				console.log('ERROR: Invalid JSON message: ' + error);
+				console.log('WARNING: Invalid JSON message: ' + error);
 				return;
 			}
 
@@ -258,7 +253,10 @@ function Device(parameters)
 }
 
 /*
- * devices is a device group
+ * Helper function that returns an array 
+ * of device descriptions for devices
+ *
+ * @returns - an array of descriptions
  */ 
 Device.get_descriptions = function(devices)
 {

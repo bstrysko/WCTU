@@ -1,4 +1,6 @@
-//true if running in NodeJS
+/*
+ * Only use 'require' if running in NodeJS
+ */
 if(typeof(window) === 'undefined') 
 {
 	var WebSocket = require('ws');

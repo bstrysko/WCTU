@@ -54,8 +54,7 @@ function Oscilloscope(parameters)
 	{
 		if(Global.emulated !== true)
 		{
-			console.log("ERROR: Oscilloscope parameter 'voltages' not provided while running in non-emulated mode");
-			process.exit(1);
+			throw new Error("Oscilloscope parameter 'voltages' not provided while running in non-emulated mode");
 		}
 
 		parameters.voltages = {};
@@ -65,8 +64,7 @@ function Oscilloscope(parameters)
 	{
 		if(Global.emulated !== true)
 		{
-			console.log("ERROR: Oscilloscope parameter 'voltages.min' not provided while running in non-emulated mode");
-			process.exit(1);
+			throw new Error("Oscilloscope parameter 'voltages.min' not provided while running in non-emulated mode");
 		}
 
 		parameters.voltages.min = -10;
@@ -76,8 +74,7 @@ function Oscilloscope(parameters)
 	{
 		if(Global.emulated !== true)
 		{
-			console.log("ERROR: Oscilloscope parameter 'voltages.max' not provided while running in non-emulated mode");
-			process.exit(1);
+			throw new Error("Oscilloscope parameter 'voltages.max' not provided while running in non-emulated mode");
 		}
 
 		parameters.voltages.max = 10;
@@ -87,8 +84,7 @@ function Oscilloscope(parameters)
 	{
 		if(Global.emulated !== true)
 		{
-			console.log("ERROR: Oscilloscope parameter 'frequency' not provided while running in non-emulated mode");
-			process.exit(1);
+			throw new Error("Oscilloscope parameter 'frequency' not provided while running in non-emulated mode");
 		}
 
 		parameters.frequency = 50;
@@ -96,8 +92,7 @@ function Oscilloscope(parameters)
 
 	if(parameters.frequency < 0)
 	{
-		console.log("ERROR: Oscilloscope frequency must be greater than 0");
-		process.exit(1);
+		throw new Error("Oscilloscope frequency must be greater than 0");
 	}
 
 	this.voltages = parameters.voltages;

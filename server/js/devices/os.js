@@ -67,7 +67,7 @@ function OS(parameters)
 }
 
 /*
- * @description - returns a structure with
+ * Returns a structure with
  * information about this OS instance
  * 
  * @return - description structure with fields
@@ -85,7 +85,7 @@ OS.prototype.get_description = function()
 }
 
 /*
- * @description - returns a structure with
+ * Returns a structure with
  * information about this OS instances data
  *
  * @return - description structure with fields
@@ -104,7 +104,7 @@ OS.prototype.get_data = function()
 }
 
 /*
- * @description -  immediately send the data since get_data
+ * Immediately send the data since get_data
  * retreives updated information through the use of it's os functions.
  * Do not buffer the data since this device sends messages at low frequencies.
  *

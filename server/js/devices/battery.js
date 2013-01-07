@@ -101,7 +101,7 @@ function Battery(parameters)
 }
 
 /*
- * @description - returns a structure with
+ * Returns a structure with
  * information about this Battery instance
  * 
  * @return - description structure with fields
@@ -117,7 +117,7 @@ Battery.prototype.get_description = function()
 }
 
 /*
- * @description - returns a structure with
+ * Returns a structure with
  * information about this Battery instances calculated
  * data
  *
@@ -135,7 +135,7 @@ Battery.prototype.get_data = function()
 }
 
 /*
- * @description - depending upon whether the server
+ * Depending upon whether the server
  * is being run in emulated mode or not, make up the data,
  * otherwise read the data from the realworld somehow.  Once
  * the data is created or read in, the send_data function is called

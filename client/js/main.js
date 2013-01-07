@@ -1,4 +1,10 @@
-var Device = require("./device");
+/*
+ * Only use 'require' if running in NodeJS
+ */
+if(typeof(window) === 'undefined')
+{
+	var Device = require("./device");
+}
 
 var callback = function(device,message)
 {
@@ -31,34 +37,40 @@ var callback = function(device,message)
 	}
 }
 
-function main()
+/*
+ * Only need a main method if running in NodeJS
+ */
+if(typeof(window) === 'undefined')
 {
-	var d1;
+	function main()
+	{
+		var d1;
 
-	process.stdin.resume();
-	process.stdin.setEncoding('utf8');
-	process.stdin.setRawMode(true);
+		process.stdin.resume();
+		process.stdin.setEncoding('utf8');
+		process.stdin.setRawMode(true);
 
-	process.stdin.on('data',function(c){
-		//Ctrl-C 
-  		if (c == '\3')
-  		{ 
-		    process.exit(0); 
-		}
-		else if(c === 't')
-		{
-			//TODO: toggle transmission from all oscilloscopes
-			d1.send_command("oscilloscope",0,{
-				transmit: false,
-			});
-		} 
-		else 
-		{ 
-		    process.stdout.write(c); 
-		} 
-	});
+		process.stdin.on('data',function(c){
+			//Ctrl-C 
+	  		if (c == '\3')
+	  		{ 
+			    process.exit(0); 
+			}
+			else if(c === 't')
+			{
+				//TODO: toggle transmission from all oscilloscopes
+				d1.send_command("oscilloscope",0,{
+					transmit: false,
+				});
+			} 
+			else 
+			{ 
+			    process.stdout.write(c); 
+			} 
+		});
 
-	d1 = new Device({url: "localhost:8080"},callback);
+		d1 = new Device({url: "localhost:8080"},callback);
+	}
+
+	main();
 }
-
-main();
