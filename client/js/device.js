@@ -24,6 +24,9 @@ function Device(parameters,callback)
 
     var self = this;
 
+    self.callback = callback;
+    self.message_queue = [];
+
   	this.ws = new WebSocket('ws://' + parameters.url);
 	var ws = this.ws;
     	
@@ -44,60 +47,7 @@ function Device(parameters,callback)
                 return;
             }
 
-            if(message.type === "connection_open")
-            {
-                if(typeof(message.version) === 'undefined')
-                {
-                    console.log("'message.version' 'undefined' in message of type 'connection_open'");
-                    return;
-                }
-                else if(Global.version < message.version)
-                {
-                    console.log("Client version '" + Global.version + "' cannot support Device version '" + message.version + "'");
-                    return;
-                }
-                else if(typeof(message.devices) === 'undefined')
-                {
-                    console.log(message.type + " has no message.devices");
-                    return;
-                }
-                
-                self.version = message.version;
-
-                self.devices = {};
-
-                for(device_group_index in message.devices)
-                {
-                    self.devices[device_group_index] = {};
-
-                    for(device_index in message.devices[device_group_index])
-                    {
-                        var channel = message.devices[device_group_index][device_index].channel;
-
-                        self.devices[device_group_index][channel] = message.devices[device_group_index][device_index];
-                    }
-                }
-            }
-            //check that type is of a valid device
-            else if(typeof(self.devices[message.type]) !== 'undefined')
-            {
-                if(typeof(message.channel) === 'undefined')
-                {
-                    console.log("Message of type '" + message.type + "' has no channel field");
-                }
-                else if(typeof(self.devices[message.type][message.channel]) === 'undefined')
-                {
-                    console.log("Message of type '" + message.type + "' has an invalid channel: " + message.channel);
-                }
-                else
-                {
-                    callback(self,message);
-                }
-            }
-            else
-            {
-                console.log("WARNING: Invalid message type: " + message.type);
-            }
+            self.handle_message(self,message);
         });
 
 		ws.send(JSON.stringify({
@@ -107,6 +57,80 @@ function Device(parameters,callback)
             }, 
         }));
 	});
+}
+
+Device.prototype.handle_message = function(self,message)
+{
+    if(message.type === "connection_open")
+    {
+        if(typeof(message.version) === 'undefined')
+        {
+            console.log("'message.version' 'undefined' in message of type 'connection_open'");
+            return;
+        }
+        else if(Global.version < message.version)
+        {
+            console.log("Client version '" + Global.version + "' cannot support Device version '" + message.version + "'");
+            return;
+        }
+        else if(typeof(message.devices) === 'undefined')
+        {
+            console.log(message.type + " has no message.devices");
+            return;
+        }
+        
+        self.version = message.version;
+
+        self.devices = {};
+
+        for(device_group_index in message.devices)
+        {
+            self.devices[device_group_index] = {};
+
+            for(device_index in message.devices[device_group_index])
+            {
+                var channel = message.devices[device_group_index][device_index].channel;
+
+                self.devices[device_group_index][channel] = message.devices[device_group_index][device_index];
+            }
+        }
+
+        /*
+         * Process any messages that may have come in through the message_queue before connection_open
+         * was received
+         */
+        for(message_i in self.message_queue)
+        {
+            self.handle_message(self,self.message_queue[message_i])
+        }
+    }
+    /*
+     * Did not receive connection_open message yet.
+     */
+    else if(typeof(self.devices) === 'undefined')
+    {
+        self.message_queue.push(message);
+    }
+    //check that type is of a valid device
+    else if(typeof(self.devices[message.type]) !== 'undefined')
+    {
+        if(typeof(message.channel) === 'undefined')
+        {
+            console.log("Message of type '" + message.type + "' has no channel field");
+        }
+        else if(typeof(self.devices[message.type][message.channel]) === 'undefined')
+        {
+            console.log("Message of type '" + message.type + "' has an invalid channel: " + message.channel);
+        }
+        else
+        {
+            self.callback(self,message);
+        }
+    }
+    else
+    {
+        console.log("WARNING: Invalid message type: " + message.type);
+    }
 }
 
 /*
