@@ -184,20 +184,30 @@ function Device(parameters)
 					{
 						console.log("WARNING: " + message.type + " message has missing 'channel' field");
 					}
-					else if(typeof(self.devices[message.type][message.channel]) === 'undefined')
-					{
-						console.log("WARNING: " + message.type + " message has invalid 'channel' field");
-					}
-					else
+					else if((message.channel === -1) || (typeof(self.devices[message.type][message.channel]) !== 'undefined'))
 					{
 						if(typeof(message.data) === 'undefined')
 						{
-							console.log("WARNING: " + message.type + " messages has missing 'data' field");
+							console.log("WARNING: " + message.type + " message to channel: " + message.channel + " has missing 'data' field");
+						}
+						/*
+						 * If -1 broadcast to all devices inside device group
+						 */
+						else if(message.channel === -1)
+						{
+							for(var channel_i in self.devices[message.type])
+							{
+								self.devices[message.type][channel_i].receive_message(message.data,this.transmit[message.type],channel_i);
+							}
 						}
 						else
 						{
 							self.devices[message.type][message.channel].receive_message(message.data,this.transmit[message.type],message.channel);
 						}
+					}
+					else
+					{
+						console.log("WARNING: " + message.type + " message has invalid 'channel' field: " + message.channel);
 					}
 				}
 				else

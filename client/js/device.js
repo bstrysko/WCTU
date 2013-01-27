@@ -126,16 +126,13 @@ Device.prototype.send_command = function(type,channel,data)
 {
     if(typeof(this.devices[type]) !== 'undefined')
     {
-        if(channel === -1)
+        if((channel === -1) || (typeof(this.devices[type][channel]) !== 'undefined'))
         {
-            for(channel_i in this.devices[type])
-            {
-                this._send_command(type,channel_i,data);
-            }
-        }
-        else if(typeof(this.devices[type][channel]) !== 'undefined')
-        {
-            this._send_command(type,channel,data);
+            this.ws.send(JSON.stringify({
+                type: type,
+                channel: channel,
+                data: data,
+            }));
         }
         else
         {
@@ -146,27 +143,6 @@ Device.prototype.send_command = function(type,channel,data)
     {
         console.log("WARNING: " + type + " is not a valid device group.  Message " + JSON.stringify(data) + " not sent");
     }
-}
-
-/*
- * Helper function of send_command.  Arguments are the same
- * as send_command except there is no error checking and thus -1
- * is not a valid channel argument.
- * 
- * @parameters
- * type - device group name
- * channel - device channel on device group.  Cannot be -1.
- * data - object containing the command argument key value pairs
- *
- * @return - nothing
- */
-Device.prototype._send_command = function(type,channel,data)
-{
-    this.ws.send(JSON.stringify({
-        type: type,
-        channel: channel,
-        data: data,
-    }));
 }
 
 /*
