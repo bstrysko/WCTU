@@ -52,7 +52,7 @@ if(typeof(window) === 'undefined')
 
 		process.stdin.on('data',function(c){
 			//Ctrl-C 
-	  		if (c == '\3')
+	  		if (c === '\3')
 	  		{ 
 			    process.exit(0); 
 			}
@@ -69,7 +69,7 @@ if(typeof(window) === 'undefined')
 			} 
 		});
 
-		d1 = new Device({url: "localhost:8080"},callback);
+		d1 = new Device({url: "128.2.99.148:8080"},callback);
 	}
 
 	main();
