@@ -11,7 +11,7 @@ default: spi.hex
 %.hex: %.elf
 	avr-objcopy -j .text -j .data -O ihex $< $@
 
-spi.elf: spi.c
+spi.elf: spi.c spi.h
 	avr-g++ $(FLAGS) spi.c -o spi.elf
 
 program: spi.hex
