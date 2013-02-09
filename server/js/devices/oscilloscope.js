@@ -131,6 +131,7 @@ function Oscilloscope(parameters)
 	/*
 	 * Read in data every 1 millisecond
 	 */
+	//TODO: set as parameter
 	setInterval(this.read_data,1,this);
 }
 
