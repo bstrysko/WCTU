@@ -20,7 +20,7 @@ unsigned char battery_read (char channel, char address)	{
 				cli();
 				adc_buffer = adc_current;
 				sei();
-				return adc_buffer & 0xf;		
+				return adc_buffer & 0xff;
 				break;
 
 			case VOLTAGE_HIGH_ADDR:
@@ -41,11 +41,11 @@ ISR(ADC_vect) {
 
 void battery_init()	{
 	/*
-	 * REFS = 1, AVcc with external capacitor on AREF pin
+	 * REFS = 0, AREF
 	 * ADLAR = 0, right adjust
 	 * MUX = 0
 	 */
-	ADMUX |= _BV(REFS0);
+	ADMUX = 0;
 
 	/*
 	 * ADEN = 1, enable ADC
