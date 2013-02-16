@@ -165,9 +165,9 @@ Oscilloscope.prototype.get_description = function()
  */
 Oscilloscope.prototype.get_data = function()
 {
-  return {
-    waveform: this.data.values,
-  };
+	return {
+		waveform: this.data.values,
+	};
 }
 
 /*

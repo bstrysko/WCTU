@@ -33,6 +33,7 @@ if(typeof(window) === 'undefined')
 {
 	var WebSocketServer = require('ws').Server;
 	var Global = require('./global');
+	var SPI = require('./spi');
 }
 
 /*
@@ -115,6 +116,11 @@ function Device(parameters)
 			this.devices[device_group_name][channel] = parameters.devices[device_group_index][device_index];
 		}
 	}
+
+	/*
+	 * Initialize SPI busses here so when modules start collecting data they are ready.
+	 */
+	SPI.init();
 
 	wss = new WebSocketServer({port: parameters.port});
 
