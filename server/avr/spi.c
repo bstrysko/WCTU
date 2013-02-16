@@ -46,20 +46,15 @@ ISR(SPI_STC_vect) {
 			break;
 		case WAIT_FOR_ADDRESS:
 			parse_address(msg);
-			switch (cmd.action) {
-				case READ:
-					state = IGNORE;
-					if (read_callbacks[cmd.group])
-						msg = (*read_callbacks[cmd.group])(cmd.channel, cmd.address);
-					else
-						msg = 0xff;
-					respond(msg);
-					break;
-				case WRITE:
-					state = WAIT_FOR_WRITE;
-					respond(0xff);
-					break;
-			}
+			if (read_callbacks[cmd.group])
+				msg = (*read_callbacks[cmd.group])(cmd.channel, cmd.address);
+			else
+				msg = 0xff;
+			respond(msg);
+			if (cmd.action == READ)
+				state = IGNORE;
+			else
+				state = WAIT_FOR_WRITE;
 			break;
 		case WAIT_FOR_WRITE:
 			if (write_callbacks[cmd.group])
