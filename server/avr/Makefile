@@ -6,13 +6,16 @@ PROG=avrispMKII
 F_CPU=20000000
 FLAGS=-mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -Os -Wall
 
-default: spi.hex
+SRC=main.c spi.c battery.c
+HDR=spi.h battery.h
+
+default: avr.hex
 
 %.hex: %.elf
 	avr-objcopy -j .text -j .data -O ihex $< $@
 
-spi.elf: spi.c spi.h
-	avr-g++ $(FLAGS) spi.c -o spi.elf
+avr.elf: $(SRC) $(HDR)
+	avr-g++ $(FLAGS) $(SRC) -o avr.elf
 
-program: spi.hex
+program: avr.hex
 	avrdude -p $(PART) -c $(PROG) -P usb -B 1 -U flash:w:spi.hex
