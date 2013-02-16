@@ -98,11 +98,4 @@ unsigned char test_read(char channel, char address) {
 	return test[(int)address];
 }
 
-int main() {
-	sei();
-	spi_init();
-	spi_register_callbacks(1, test_write, test_read);
-	while (1) {
-	}
-	return 0;
-}
+
