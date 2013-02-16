@@ -7,17 +7,24 @@
 #include "battery.h"
 #include "spi.h"
 
-int adc;
+/* adc_current is updated by the interrupt. When VOLTAGE_LOW_ADDR is read, it
+ * will atomically read adc_current into adc_buffer and use that value. Later
+ * when VOLTAGE_HIGH_ADDR is read, it still uses the value in adc_buffer to
+ * eliminate race conditions. */
+int adc_current, adc_buffer;
 
 unsigned char battery_read (char channel, char address)	{
 	if (channel == BATTERY_CHANNEL)	{
 		switch(address)	{
-			case VOLTAGE_HIGH_ADDR:
-				return adc >> 8;		
+			case VOLTAGE_LOW_ADDR:
+				cli();
+				adc_buffer = adc_current;
+				sei();
+				return adc_buffer & 0xf;		
 				break;
 
-			case VOLTAGE_LOW_ADDR:
-				return adc & 0xf;		
+			case VOLTAGE_HIGH_ADDR:
+				return adc_buffer >> 8;		
 				break;
 
 			case CHARGING_ADDR:
@@ -29,7 +36,7 @@ unsigned char battery_read (char channel, char address)	{
 }
 
 ISR(ADC_vect) {
-	adc = ADC;
+	adc_current = ADC;
 }
 
 void battery_init()	{
