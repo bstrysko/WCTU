@@ -18,4 +18,4 @@ avr.elf: $(SRC) $(HDR)
 	avr-g++ $(FLAGS) $(SRC) -o avr.elf
 
 program: avr.hex
-	avrdude -p $(PART) -c $(PROG) -P usb -B 1 -U flash:w:spi.hex
+	avrdude -p $(PART) -c $(PROG) -P usb -B 1 -U flash:w:avr.hex
