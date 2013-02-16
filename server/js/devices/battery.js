@@ -190,7 +190,7 @@ Battery.prototype.read_data = function(battery)
 			 * Read battery voltage MSB
 			 */
 			SPI.read(0,battery.battery_group_id,battery.channel,battery.registers.voltage_msb,function(msb){
-				battery.data.voltage |= (msb << 0x8) & 0x200;
+				battery.data.voltage |= (msb << 0x8) & 0x300;
 				console.log(battery.data.voltage);
 
 				/*
