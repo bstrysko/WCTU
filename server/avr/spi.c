@@ -74,10 +74,10 @@ ISR(SPI_STC_vect) {
 	}
 }
 
-void spi_register_callbacks(int group, write_cb write, read_cb read) {
+void spi_register_callbacks(char group, write_cb write, read_cb read) {
 	if (0 <= group && group < N_GROUPS) {
-		write_callbacks[group] = write;
-		read_callbacks[group] = read;
+		write_callbacks[(int)group] = write;
+		read_callbacks[(int)group] = read;
 	}
 }
 

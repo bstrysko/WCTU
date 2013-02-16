@@ -1,7 +1,7 @@
-#DEFINE VOLTAGE_ADDR 0
-#DEFINE CHARGING_ADDR 1
-#DEFINE BATTERY_CHANNEL 0
-#DEFINE CHARGING_PIN PD2
+#define VOLTAGE_ADDR 0
+#define CHARGING_ADDR 1
+#define BATTERY_CHANNEL 0
+#define CHARGING_PIN PD2
 
 // Reads whether the battery is charging and the battery's voltage
 unsigned char battery_read (char channel, char address);

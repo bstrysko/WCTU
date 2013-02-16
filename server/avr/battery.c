@@ -18,10 +18,10 @@ unsigned char battery_read (char channel, char address)	{
 				return (PIND >> (CHARGING_PIN)) & 0x01;
 				break;
 		}
-	
+  }
 	return 0;
 }
 
 void battery_init()	{
-	spi_register_callbacks(BATTERY_CHANNEL, NULL, battery_read);
+	spi_register_callbacks(BATTERY_CHANNEL, 0, battery_read);
 }
