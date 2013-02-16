@@ -7,7 +7,7 @@
  * The battery class represents an battery that may
  * be present on the device.  As of right there are 
  * no commands that can be sent to a battery except
- * 'transmit', which is supported by all devices.    
+ * 'transmit', which is supported by all devices.
  */
 
 /*
@@ -16,7 +16,8 @@
 if(typeof(window) === 'undefined')
 {
  	var Global = require('../global');
- 	var Base = require("./base");
+ 	var Base = require('./base');
+ 	var SPI = require('../spi');
 }
 
 /*
@@ -70,10 +71,9 @@ function Battery(parameters)
 	/*
 	 * Initialize where the data will be stored to
 	 */
-	this.data = {
-		timestamps: [],
-		values: [],
-	};
+	this.data = {};
+	this.data.charging = null;
+	this.data.voltage = null;
 
 	/*
 	 * Values that will be calculated based
@@ -95,9 +95,23 @@ function Battery(parameters)
 	};
 
 	/*
-	 * Read in data every 1 minute(1000 milliseconds/second)*60 seconds/1 minute
+	 * Battery device group id on the SPI bus
 	 */
-	setInterval(this.read_data,60000,this);
+	this.battery_group_id = 0x1;
+
+	/*
+	 * Valid register values that can be written to the
+	 * SPI bus
+	 */
+	this.registers = {};
+	this.registers.voltage_lsb = 0x0;
+	this.registers.voltage_msb = 0x1;
+	this.registers.charging = 0x2;
+
+	/*
+	 * Read in data every 2 seconds(1000 milliseconds/second)*2 seconds
+	 */
+	setInterval(this.read_data,2000/*60000*/,this);
 }
 
 /*
@@ -128,10 +142,11 @@ Battery.prototype.get_description = function()
  */
 Battery.prototype.get_data = function()
 {
-  return {
-    life: this.life,
-    time: this.time_remaining,
-  }
+	return {
+		life: this.life,
+		time: this.time_remaining,
+		charging: this.data.charging,
+	}
 }
 
 /*
@@ -165,7 +180,29 @@ Battery.prototype.read_data = function(battery)
 	}
 	else
 	{
-		//TODO: read value off ADC
+		/*
+		 * Read battery voltage LSB
+		 */
+		SPI.read(0,battery.battery_group_id,battery.channel,battery.registers.voltage_lsb,function(lsb){
+			battery.data.voltage = lsb & 0xFF;
+			
+			/*
+			 * Read battery voltage MSB
+			 */
+			SPI.read(0,battery.battery_group_id,battery.channel,battery.registers.voltage_msb,function(msb){
+				battery.data.voltage |= (msb << 0xFF) & 0x200;
+				console.log(battery.data.voltage);
+
+				/*
+				 * Read if the battery is charging or not.
+				 */
+				SPI.read(0,battery.battery_group_id,battery.channel,battery.registers.charging,function(charging){
+					battery.data.charging = (charging) ? true: false;
+					console.log(battery.data.charging);
+				});
+
+			});
+		});
 	}
 
 	battery.send_data();
