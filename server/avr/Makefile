@@ -6,8 +6,8 @@ PROG=avrispMKII
 F_CPU=20000000
 FLAGS=-mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -Os -Wall
 
-SRC=main.c spi.c battery.c
-HDR=spi.h battery.h
+SRC=main.c spi.c battery.c twi.c pot.c
+HDR=spi.h battery.h twi.h pot.h
 
 default: avr.hex
 
