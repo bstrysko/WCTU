@@ -4,6 +4,7 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include "constants.h"
 #include "battery.h"
 #include "spi.h"
 
@@ -16,18 +17,18 @@ int adc_current, adc_buffer;
 unsigned char battery_read (char channel, char address)	{
 	if (channel == BATTERY_CHANNEL)	{
 		switch(address)	{
-			case VOLTAGE_LOW_ADDR:
+			case BATTERY_VOLTAGE_LOW:
 				cli();
 				adc_buffer = adc_current;
 				sei();
 				return adc_buffer & 0xff;
 				break;
 
-			case VOLTAGE_HIGH_ADDR:
+			case BATTERY_VOLTAGE_HIGH:
 				return adc_buffer >> 8;		
 				break;
 
-			case CHARGING_ADDR:
+			case BATTERY_CHARGING:
 				return (PIND >> (CHARGING_PIN)) & 0x01;
 				break;
 		}

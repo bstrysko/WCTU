@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "constants.h"
 #include "pot.h"
 #include "spi.h"
 #include "twi.h"
@@ -18,15 +19,15 @@ struct pot_addr addrs[] = {
 #define POT_N_CHANNELS sizeof(addrs)/sizeof(struct pot_addr)
 
 void pot_init() {
-  spi_register_callbacks(POT_GROUP, pot_write, 0);
+  spi_register_callbacks(OSCOPE_GROUP, pot_write, 0);
 }
 
 void pot_write(char channel, char address, unsigned char msg) {
   unsigned char buf[2];
-  if (address == POT_VALUE_ADDR && 0 <= channel
-      && (size_t)channel < POT_N_CHANNELS) {
-    buf[0] = addrs[(short)channel].pot_number? POT_CMD_WR1 : POT_CMD_WR0;
+  unsigned short pot = channel;
+  if (address == OSCOPE_POT_VALUE && pot < POT_N_CHANNELS) {
+    buf[0] = addrs[pot].pot_number? POT_CMD_WR1 : POT_CMD_WR0;
     buf[1] = msg;
-    twi_writeTo(addrs[(short)channel].i2c_addr, buf, sizeof(buf), 0);
+    twi_writeTo(addrs[pot].i2c_addr, buf, sizeof(buf), 0);
   }
 }
