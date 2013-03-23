@@ -48,9 +48,11 @@ struct file_operations fops =
     /* TODO ability to select */
     .owner = THIS_MODULE,
     .open = adc_open,
+    //.release = adc_release,
     .read = adc_read
 };
 
+/* TODO move irq registering to adc_open and release it in adc_release */
 static int adc_open(struct inode *inode, struct file *file)
 {
     int i = iminor(inode);
@@ -64,16 +66,19 @@ static ssize_t adc_read(struct file *file, char __user *udata, size_t count,
         loff_t *offset)
 {
     int len, unwritten;
+    unsigned long flags;
     struct adc_t *adc = file->private_data;
 
     if (down_interruptible(&adc->sem))
         return -ERESTARTSYS;
 
-    /* TODO local_irq_save */
+    /* TODO try to minimize the area where interrupts are disabled */
+    local_irq_save(flags);
 
     if (adc->buf_start == adc->buf_end)
     {
         /* Buffer is empty */
+        /* TODO this should block instead of returning 0 */
         len = 0;
     }
     else if (adc->buf_start < adc->buf_end)
@@ -110,7 +115,7 @@ static ssize_t adc_read(struct file *file, char __user *udata, size_t count,
         }
     }
 
-    /* TODO local_irq_restore */
+    local_irq_restore(flags);
 
     up(&adc->sem);
     return len;
@@ -119,6 +124,11 @@ static ssize_t adc_read(struct file *file, char __user *udata, size_t count,
 irqreturn_t adc_irq(int irq, void *adc_vp)
 {
     struct adc_t *adc = adc_vp;
+    int i;
+    unsigned char value;
+
+    for (i = 0; i < 8; i++) 
+      value |= gpio_value_get(adc_pins[i]) << i;
 
     (void)adc; /* TODO read pins */
 
@@ -154,7 +164,7 @@ static int adc_init(dev_t dev, struct adc_t *adc)
         }
     }
 
-    /* Also set direction for interrupt (TODO is this necessary?) */
+    /* Also set direction for interrupt */
     err = gpio_direction_input(adc_int_pin);
     if (err < 0) {
         printk(KERN_ALERT "Error %d setting gpio %d to input\n", -err,
